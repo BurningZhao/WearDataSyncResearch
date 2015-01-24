@@ -1,23 +1,35 @@
 package mars.c.weardatasyncresearch;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import mars.c.wearsynclib.Client;
+import mars.c.wearsynclib.WearConnector;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getCanonicalName();
-    private Client client;
+    private WearConnector wearConnector;
 
     @InjectView(R.id.status)
     protected TextView status;
@@ -25,6 +37,8 @@ public class MainActivity extends ActionBarActivity {
     protected TextView data;
     @InjectView(R.id.list)
     protected ListView list;
+    @InjectView(R.id.send)
+    protected Button send;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +46,34 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
-        client = new Client(this, new Client.ConnectionListener() {
+        wearConnector = new WearConnector(this, new Client.ConnectionListener() {
             @Override
             public void onConnected() {
                   Log.d(TAG, "client connected");
                 status.setText("connected");
             }
+        },
+        new WearConnector.Display() {
+            @Override
+            public void show(String message) {
+                data.setText(message);
+            }
+        });
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "sending");
+                wearConnector.send(String.valueOf(new Random().nextInt(100)));
+            }
         });
     }
 
+    @Override
+    protected void onStop() {
+        wearConnector.disconnect();
+        super.onStop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -53,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        client.onActivityResult(requestCode, resultCode, data);
+        wearConnector.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

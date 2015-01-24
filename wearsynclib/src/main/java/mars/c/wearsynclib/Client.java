@@ -19,6 +19,11 @@ public class Client {
     private static final int REQUEST_OAUTH = 1;
 
     private Activity activity;
+
+    public GoogleApiClient getGoogleApiClient() {
+        return googleApiClient;
+    }
+
     private GoogleApiClient googleApiClient;
     private boolean authInProgress = false;
 
@@ -36,6 +41,9 @@ public class Client {
 
     public void connect() {
         googleApiClient.connect();
+    }
+    public void disconnect() {
+        googleApiClient.disconnect();
     }
 
     private void init() {
