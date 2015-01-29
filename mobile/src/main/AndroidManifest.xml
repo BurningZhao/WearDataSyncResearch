@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mars.c.weardatasyncresearch" >
+    package="mars.c.weardatasyncresearch"
+    android:versionCode="2"
+    android:versionName="1.0.1">
+
+    <uses-feature android:name="android.hardware.type.watch" android:required="false"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="true"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/yellow_sync"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
